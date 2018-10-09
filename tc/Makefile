@@ -3,6 +3,9 @@ TCOBJ= tc.o tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
        tc_exec.o m_police.o m_estimator.o m_action.o m_ematch.o \
        emp_ematch.yacc.o emp_ematch.lex.o
 
+TCLIBOBJ= tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
+       tc_exec.o m_police.o m_estimator.o m_action.o m_ematch.o \
+       emp_ematch.yacc.o emp_ematch.lex.o
 include ../config.mk
 
 SHARED_LIBS ?= y
@@ -102,6 +105,8 @@ ifneq ($(TC_CONFIG_NO_XT),y)
 endif
 
 TCOBJ += $(TCMODULES)
+TCLIBOBJ += $(TCMODULES)
+
 LDLIBS += -L. -lm
 
 ifeq ($(SHARED_LIBS),y)
@@ -114,6 +119,8 @@ TCLIB += tc_red.o
 TCLIB += tc_cbq.o
 TCLIB += tc_estimator.o
 TCLIB += tc_stab.o
+#TCLIB += $(TCLIBOBJ)
+TCLIB += $(TCOBJ)
 
 CFLAGS += -DCONFIG_GACT -DCONFIG_GACT_PROB
 ifneq ($(IPT_LIB_DIR),)
@@ -133,7 +140,7 @@ MODDESTDIR := $(DESTDIR)$(LIBDIR)/tc
 all: tc $(TCSO)
 
 tc: $(TCOBJ) $(LIBNETLINK) libtc.a
-	$(QUIET_LINK)$(CC) $^ $(LDFLAGS) $(LDLIBS) -o $@
+	$(QUIET_LINK)$(CC) -static $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 libtc.a: $(TCLIB)
 	$(QUIET_AR)$(AR) rcs $@ $^

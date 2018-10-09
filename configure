@@ -21,7 +21,8 @@ check_toolchain()
 {
     : ${PKG_CONFIG:=pkg-config}
     : ${AR=ar}
-    : ${CC=gcc}
+#    : ${CC=gcc}
+    : ${CC=musl-gcc}
     echo "PKG_CONFIG:=${PKG_CONFIG}" >>$CONFIG
     echo "AR:=${AR}" >>$CONFIG
     echo "CC:=${CC}" >>$CONFIG
@@ -51,10 +52,11 @@ EOF
 
 check_xtables()
 {
-	if ! ${PKG_CONFIG} xtables --exists
-	then
-		echo "TC_CONFIG_NO_XT:=y" >>$CONFIG
-	fi
+	#if ! ${PKG_CONFIG} xtables --exists
+	#then
+	#	echo "TC_CONFIG_NO_XT:=y" >>$CONFIG
+	#fi
+	echo "TC_CONFIG_NO_XT:=y" >>$CONFIG
 }
 
 check_xt()
@@ -412,11 +414,11 @@ check_setns
 echo -n "SELinux support: "
 check_selinux
 
-echo -n "ELF support: "
-check_elf
+#echo -n "ELF support: "
+#check_elf
 
-echo -n "libmnl support: "
-check_mnl
+#echo -n "libmnl support: "
+#check_mnl
 
 echo -n "Berkeley DB: "
 check_berkeley_db
@@ -424,8 +426,8 @@ check_berkeley_db
 echo -n "need for strlcpy: "
 check_strlcpy
 
-echo -n "libcap support: "
-check_cap
+#echo -n "libcap support: "
+#check_cap
 
 echo >> $CONFIG
 echo "%.o: %.c" >> $CONFIG
