@@ -3,9 +3,6 @@ TCOBJ= tc.o tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
        tc_exec.o m_police.o m_estimator.o m_action.o m_ematch.o \
        emp_ematch.yacc.o emp_ematch.lex.o
 
-TCLIBOBJ= tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
-       tc_exec.o m_police.o m_estimator.o m_action.o m_ematch.o \
-       emp_ematch.yacc.o emp_ematch.lex.o
 include ../config.mk
 
 SHARED_LIBS ?= y
@@ -78,6 +75,7 @@ TCMODULES += f_matchall.o
 TCMODULES += q_cbs.o
 TCMODULES += q_etf.o
 
+
 TCSO :=
 ifeq ($(TC_CONFIG_ATM),y)
   TCSO += q_atm.so
@@ -105,7 +103,7 @@ ifneq ($(TC_CONFIG_NO_XT),y)
 endif
 
 TCOBJ += $(TCMODULES)
-TCLIBOBJ += $(TCMODULES)
+
 
 LDLIBS += -L. -lm
 
@@ -120,7 +118,16 @@ TCLIB += tc_cbq.o
 TCLIB += tc_estimator.o
 TCLIB += tc_stab.o
 #TCLIB += $(TCLIBOBJ)
-TCLIB += $(TCOBJ)
+#TCLIB += $(TCOBJ)
+
+TCLIBOBJ = $(TCOBJ)
+TCLIBOBJ += $(TCLIB)
+TCLIBOBJ += q_prio.o
+TCLIBOBJ += q_netem.o
+TCLIBOBJ += f_u32.o
+TCLIBOBJ += q_htb.o
+TCLIBOBJ += em_u32.o
+
 
 CFLAGS += -DCONFIG_GACT -DCONFIG_GACT_PROB
 ifneq ($(IPT_LIB_DIR),)
@@ -137,12 +144,15 @@ MODDESTDIR := $(DESTDIR)$(LIBDIR)/tc
 	$(QUIET_CC)$(CC) $(CFLAGS) $(LDFLAGS) -shared -fpic $< -o $@
 
 
-all: tc $(TCSO)
+all: tc $(TCSO) libutc.a
 
 tc: $(TCOBJ) $(LIBNETLINK) libtc.a
 	$(QUIET_LINK)$(CC) -static $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 libtc.a: $(TCLIB)
+	$(QUIET_AR)$(AR) rcs $@ $^
+
+libutc.a: $(TCLIBOBJ)
 	$(QUIET_AR)$(AR) rcs $@ $^
 
 install: all
@@ -160,7 +170,7 @@ install: all
 	fi
 
 clean:
-	rm -f $(TCOBJ) $(TCLIB) libtc.a tc *.so emp_ematch.yacc.h; \
+	rm -f $(TCOBJ) $(TCLIB) libtc.a libutc.a tc *.so emp_ematch.yacc.h; \
 	rm -f emp_ematch.yacc.*
 
 q_atm.so: q_atm.c

@@ -429,6 +429,7 @@ check_strlcpy
 #echo -n "libcap support: "
 #check_cap
 
+echo CFLAGS += -fPIC >> $CONFIG
 echo >> $CONFIG
 echo "%.o: %.c" >> $CONFIG
 echo '	$(QUIET_CC)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<' >> $CONFIG
