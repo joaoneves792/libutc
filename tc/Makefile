@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
-TCOBJ= tc.o tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
+TCBASEOBJ= tc_qdisc.o tc_class.o tc_filter.o tc_util.o tc_monitor.o \
        tc_exec.o m_police.o m_estimator.o m_action.o m_ematch.o \
        emp_ematch.yacc.o emp_ematch.lex.o
+TCOBJ = tc.o $(TCBASEOBJ)
 
 include ../config.mk
 
@@ -120,7 +121,7 @@ TCLIB += tc_stab.o
 #TCLIB += $(TCLIBOBJ)
 #TCLIB += $(TCOBJ)
 
-TCLIBOBJ = $(TCOBJ)
+TCLIBOBJ = $(TCBASEOBJ)
 TCLIBOBJ += $(TCLIB)
 TCLIBOBJ += q_prio.o
 TCLIBOBJ += q_netem.o
