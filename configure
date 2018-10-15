@@ -21,8 +21,8 @@ check_toolchain()
 {
     : ${PKG_CONFIG:=pkg-config}
     : ${AR=ar}
-#    : ${CC=gcc}
-    : ${CC=musl-gcc}
+    : ${CC=gcc}
+#    : ${CC=musl-gcc}
     echo "PKG_CONFIG:=${PKG_CONFIG}" >>$CONFIG
     echo "AR:=${AR}" >>$CONFIG
     echo "CC:=${CC}" >>$CONFIG
